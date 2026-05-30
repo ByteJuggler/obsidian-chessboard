@@ -23,15 +23,19 @@ Manual testing of Obsidian integration requires loading `main.js` as a local plu
 ## Working rules
 
 ### Output style
+
 Tokens are expensive. Be brief and to the point. Omit preamble, pleasantries, and summaries of what you just did. One sentence per update. Code speaks louder than prose.
 
 ### TDD/BDD workflow
+
 Follow strict red-green-refactor:
+
 1. Write one failing test that describes the behavior (red).
 2. Write the minimum code to make it pass (green).
 3. Refactor only while green.
 
 No work may be declared complete unless:
+
 - Passing tests exist for the new behavior.
 - `npm test` passes with zero failures (full regression).
 - Any regressions introduced are fixed before declaring done.
@@ -39,7 +43,9 @@ No work may be declared complete unless:
 Tests must use public interfaces only. No testing implementation details or private methods.
 
 ### Commits
+
 Use [Conventional Commits](https://www.conventionalcommits.org/) with semver semantics:
+
 - `feat:` — new feature (triggers minor bump)
 - `fix:` — bug fix (triggers patch bump)
 - `feat!:` / `fix!:` / `BREAKING CHANGE:` — breaking change (triggers major bump)
@@ -49,8 +55,21 @@ Do **not** add `Co-Authored-By:` lines to commits, PRs, or anywhere else.
 
 When creating PRs, always use the template in `.github/pull_request_template.md` — fill every section, remove optional sections that don't apply.
 
+### Changelog
+
+After adding any new feature, update `CHANGELOG.md` with a brief entry under the `[Unreleased]` section describing the change. Follow the existing format in that file.
+
 ### Markdown authoring
+
 Double trailing spaces (`  `) produce a hard linebreak in Markdown. When writing markdown that uses frontmatter-style blocks or bullet lists where each line must stay on its own line (i.e. must not reflow into the previous line), terminate each line with two spaces. Never rely on a blank line between items when a hard linebreak within a block is intended. `.editorconfig` preserves trailing whitespace in `.md` files for this reason.
+
+After writing or editing any Markdown file, lint it with `markdownlint-cli` if available:
+
+```bash
+npx markdownlint-cli <file>.md
+```
+
+If `markdownlint-cli` is not installed and cannot be run via `npx`, note this to the user and ask them to install it (`npm install -g markdownlint-cli`) so Markdown quality can be maintained.
 
 ## Architecture
 
