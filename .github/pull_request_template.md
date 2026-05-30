@@ -23,8 +23,8 @@ Also write a brief summary of the change.
 
 ## 🧪 Testing & validation
 
-- List any tests added to cover the feature being implemented/bug being fixes.
-- Confirm the status of the test suite (should be 100% green) and  coverage statue, which should not have decreased.
+- List any tests added to cover the feature being implemented/bug being fixed.
+- Confirm the status of the test suite (should be 100% green) and coverage status, which should not have decreased.
 
 ## 📸 Screenshots (if appropriate)
 

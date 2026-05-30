@@ -119,4 +119,3 @@ Settings (board colors, max width) are stored via Obsidian's `loadData/saveData`
 ### Issue tracker
 
 Issues live in GitHub Issues (`THeK3nger/obsidian-chessboard`). See `docs/agents/issue-tracker.md`.
-
