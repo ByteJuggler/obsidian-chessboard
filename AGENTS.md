@@ -1,6 +1,10 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to AI agents and coding assistants working in this repository.
+
+## Project
+
+`obsidian-chessboard` is an [Obsidian](https://obsidian.md) plugin that renders chess positions as interactive SVG boards inside Markdown preview. Authors write a FEN string or PGN game inside a fenced code block; the plugin converts it to an inline SVG with optional annotations (highlights, arrows, move-quality icons) and, for PGN games, interactive ply-by-ply navigation.
 
 ## Commands
 
