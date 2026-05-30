@@ -190,6 +190,7 @@ export class SVGChessboard {
    */
   private drawAnnotations(): [SVGElement, SVGElement] {
     let g = activeDocument.createElementNS(this.xmlns, "g");
+    g.setAttributeNS(null, "data-group", "annotations-bg");
     for (let [coord, highlightColor] of this.highlights) {
       const square = this.drawSquare(coord);
       square.setAttributeNS(null, "fill", highlightColor);
@@ -197,6 +198,7 @@ export class SVGChessboard {
       g.appendChild(square);
     }
     let g_foreground = activeDocument.createElementNS(this.xmlns, "g");
+    g_foreground.setAttributeNS(null, "data-group", "annotations-fg");
     for (let annotation of this.annotations) {
       if (annotation.type === "arrow") {
         let start = annotation.start;
@@ -280,6 +282,7 @@ export class SVGChessboard {
 
   private drawBoard(): SVGElement {
     let g = activeDocument.createElementNS(this.xmlns, "g");
+    g.setAttributeNS(null, "data-group", "board");
     for (let r = 0; r < 8; r++) {
       for (let c = 0; c < 8; c++) {
         g.appendChild(this.drawSquare([c, r]));
@@ -290,6 +293,7 @@ export class SVGChessboard {
 
   private drawPieces(): SVGElement {
     let g = activeDocument.createElementNS(this.xmlns, "g");
+    g.setAttributeNS(null, "data-group", "pieces");
     for (let r = 0; r < 8; r++) {
       for (let c = 0; c < 8; c++) {
         const piece = this.chessboard.get(c, r);
