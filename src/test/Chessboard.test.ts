@@ -100,6 +100,22 @@ describe('Chessboard.fromFEN', () => {
     const board = Chessboard.fromFEN(STARTING_FEN)
     expect(board.get(4, 4)).toBeUndefined()
   })
+
+  it('throws on a malformed FEN string when skipValidation is false', () => {
+    // Scenario: Garbage input is rejected immediately in strict mode
+    // Given: a string that is not a valid FEN
+    // When: fromFEN is called with the default skipValidation=false
+    // Then: chess.js throws an error
+    expect(() => Chessboard.fromFEN('not-a-valid-fen')).toThrow()
+  })
+
+  it('throws on an illegal position when skipValidation is false', () => {
+    // Scenario: Structurally parseable but illegal positions are rejected in strict mode
+    // Given: a FEN with eight white kings on the back rank (no black king — illegal)
+    // When: fromFEN is called with the default skipValidation=false
+    // Then: chess.js throws an error; pass skipValidation=true to load such positions
+    expect(() => Chessboard.fromFEN('8/8/8/8/8/8/8/KKKKKKKK')).toThrow()
+  })
 })
 
 describe('Chessboard.fromPGN', () => {
