@@ -3,6 +3,7 @@ import { SVGChessboard } from '../chessboardsvg/index'
 
 const STARTING_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR'
 const NO_COORDS = { drawCoordinates: false }
+const CUSTOM_COLOR = '#ff0000' // arbitrary value used to verify color passthrough
 
 function board(g: SVGElement) {
   return g.querySelector<SVGElement>('[data-group="board"]')!
@@ -74,9 +75,9 @@ describe('SVGChessboard.fromFEN', () => {
     // When: draw() is called
     // Then: the highlight rect's fill attribute is '#ff0000'
     const sv = SVGChessboard.fromFEN(STARTING_FEN, NO_COORDS)
-    sv.highlight('e4', '#ff0000')
+    sv.highlight('e4', CUSTOM_COLOR)
     const g = sv.draw()
-    expect(bgAnnotations(g).children[0].getAttribute('fill')).toBe('#ff0000')
+    expect(bgAnnotations(g).children[0].getAttribute('fill')).toBe(CUSTOM_COLOR)
   })
 
   it('multiple highlights accumulate', () => {
