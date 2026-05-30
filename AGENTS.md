@@ -42,6 +42,19 @@ No work may be declared complete unless:
 
 Tests must use public interfaces only. No testing implementation details or private methods.
 
+Every `it` block must open with a BDD-style comment documenting the scenario it exercises:
+
+```typescript
+it('does something', () => {
+  // Scenario: <one-line description of the requirement or feature being verified>
+  // Given: <preconditions / initial state>
+  // When: <the action or event under test>
+  // Then: <the expected outcome>
+})
+```
+
+For trivial assertions where Given/When/Then would duplicate the test name, a single `// Scenario:` line suffices.
+
 ### Commits
 
 Use [Conventional Commits](https://www.conventionalcommits.org/) with semver semantics:
