@@ -16,18 +16,29 @@ function getNavButtons(container: HTMLElement) {
 
 describe('createInteractivePGNBoard', () => {
   it('renders a container element', () => {
+    // Scenario: The interactive board is wrapped in an HTMLElement container
+    // Given: a PGN string and board options
+    // When: createInteractivePGNBoard is called
+    // Then: an HTMLElement is returned
     const el = createInteractivePGNBoard(SIMPLE_PGN, BOARD_OPTS, undefined, 'none', 320)
     expect(el).toBeInstanceOf(HTMLElement)
   })
 
   it('has 4 navigation buttons', () => {
+    // Scenario: The board renders first, previous, next, and last navigation controls
+    // Given: a freshly created interactive board
+    // When: the container is queried for nav buttons
+    // Then: exactly 4 buttons with class chess-pgn-btn are present
     const el = createInteractivePGNBoard(SIMPLE_PGN, BOARD_OPTS, undefined, 'none', 320)
     const btns = el.querySelectorAll('button.chess-pgn-btn')
     expect(btns).toHaveLength(4)
   })
 
   it('first and prev buttons are disabled at start (ply 0 default)', () => {
-    // When no initialPly given, starts at ply 0
+    // Scenario: Navigation backwards is disabled when the board is at the starting position
+    // Given: an interactive board initialised at ply 0
+    // When: button disabled states are inspected
+    // Then: first and prev are disabled; next and last are enabled
     const el = createInteractivePGNBoard(SIMPLE_PGN, BOARD_OPTS, 0, 'none', 320)
     const { first, prev, next, last } = getNavButtons(el)
     expect(first.disabled).toBe(true)
@@ -37,6 +48,10 @@ describe('createInteractivePGNBoard', () => {
   })
 
   it('next and last buttons are disabled at final ply', () => {
+    // Scenario: Navigation forwards is disabled when the board is at the final move
+    // Given: an interactive board initialised beyond the last move (clamped to final ply)
+    // When: button disabled states are inspected
+    // Then: next and last are disabled; first and prev are enabled
     const el = createInteractivePGNBoard(SIMPLE_PGN, BOARD_OPTS, 999, 'none', 320)
     const { first, prev, next, last } = getNavButtons(el)
     expect(first.disabled).toBe(false)
@@ -46,6 +61,10 @@ describe('createInteractivePGNBoard', () => {
   })
 
   it('clicking next advances move info text', () => {
+    // Scenario: Clicking the next button advances the board by one half-move
+    // Given: an interactive board at ply 0 showing "Starting position"
+    // When: the next button is clicked
+    // Then: the move info text updates to show the first move (e4)
     const el = createInteractivePGNBoard(SIMPLE_PGN, BOARD_OPTS, 0, 'none', 320)
     const moveInfo = el.querySelector<HTMLElement>('.chess-pgn-move-info')
     expect(moveInfo?.textContent).toContain('Starting position')
@@ -56,6 +75,10 @@ describe('createInteractivePGNBoard', () => {
   })
 
   it('clicking last then first returns to start', () => {
+    // Scenario: The first button returns the board to the starting position from any ply
+    // Given: an interactive board at ply 0
+    // When: last is clicked (jumping to final move), then first is clicked
+    // Then: the move info text returns to "Starting position"
     const el = createInteractivePGNBoard(SIMPLE_PGN, BOARD_OPTS, 0, 'none', 320)
     const moveInfo = el.querySelector<HTMLElement>('.chess-pgn-move-info')
     const { first, last } = getNavButtons(el)
@@ -68,6 +91,10 @@ describe('createInteractivePGNBoard', () => {
   })
 
   it('ArrowRight key advances position', () => {
+    // Scenario: The ArrowRight keyboard shortcut advances the board by one half-move
+    // Given: an interactive board at ply 0
+    // When: a keydown event with key='ArrowRight' is dispatched on the container
+    // Then: the move info text updates to show the first move (e4)
     const el = createInteractivePGNBoard(SIMPLE_PGN, BOARD_OPTS, 0, 'none', 320)
     const moveInfo = el.querySelector<HTMLElement>('.chess-pgn-move-info')
     expect(moveInfo?.textContent).toContain('Starting position')
@@ -77,6 +104,10 @@ describe('createInteractivePGNBoard', () => {
   })
 
   it('ArrowLeft key goes back', () => {
+    // Scenario: The ArrowLeft keyboard shortcut steps the board back by one half-move
+    // Given: an interactive board at ply 1 showing move 'e4'
+    // When: a keydown event with key='ArrowLeft' is dispatched on the container
+    // Then: the move info text returns to "Starting position"
     const el = createInteractivePGNBoard(SIMPLE_PGN, BOARD_OPTS, 1, 'none', 320)
     const moveInfo = el.querySelector<HTMLElement>('.chess-pgn-move-info')
     expect(moveInfo?.textContent).toContain('e4')
@@ -86,6 +117,10 @@ describe('createInteractivePGNBoard', () => {
   })
 
   it('renders an SVG board inside the container', () => {
+    // Scenario: The interactive board includes an SVG chess diagram
+    // Given: a freshly created interactive board
+    // When: the container is queried for SVG elements
+    // Then: at least one SVG element is present
     const el = createInteractivePGNBoard(SIMPLE_PGN, BOARD_OPTS, undefined, 'none', 320)
     const svgs = el.querySelectorAll('svg')
     expect(svgs.length).toBeGreaterThan(0)
@@ -93,19 +128,30 @@ describe('createInteractivePGNBoard', () => {
 
   describe('move list panel', () => {
     it('renders .chess-move-list when showMoveList=true', () => {
+      // Scenario: The optional move list panel is rendered when requested
+      // Given: an interactive board created with showMoveList=true
+      // When: the container is queried for the move list element
+      // Then: an element with class chess-move-list is present
       const el = createInteractivePGNBoard(SIMPLE_PGN, BOARD_OPTS, 0, 'none', 320, true)
       const panel = el.querySelector('.chess-move-list')
       expect(panel).not.toBeNull()
     })
 
     it('move list has SAN buttons for each half-move', () => {
+      // Scenario: The move list contains one clickable button per half-move in the game
+      // Given: a PGN with 4 half-moves and showMoveList=true
+      // When: the container is queried for data-ply buttons
+      // Then: exactly 4 buttons are present
       const el = createInteractivePGNBoard(SIMPLE_PGN, BOARD_OPTS, 0, 'none', 320, true)
       const moveBtns = el.querySelectorAll('button[data-ply]')
-      // SIMPLE_PGN has 4 half-moves
       expect(moveBtns).toHaveLength(4)
     })
 
     it('clicking a move list button jumps to that ply', () => {
+      // Scenario: Clicking a move list button navigates directly to the corresponding ply
+      // Given: an interactive board at ply 0 with the move list visible
+      // When: the button for ply 2 (1...e5) is clicked
+      // Then: the move info text shows 'e5'
       const el = createInteractivePGNBoard(SIMPLE_PGN, BOARD_OPTS, 0, 'none', 320, true)
       const moveInfo = el.querySelector<HTMLElement>('.chess-pgn-move-info')
       const btn = el.querySelector<HTMLButtonElement>('button[data-ply="2"]')
@@ -114,6 +160,10 @@ describe('createInteractivePGNBoard', () => {
     })
 
     it('current move button gets chess-move-btn-current class', () => {
+      // Scenario: The move list highlights the button corresponding to the current ply
+      // Given: an interactive board initialised at ply 1
+      // When: the button for ply 1 is inspected
+      // Then: it carries the class chess-move-btn-current
       const el = createInteractivePGNBoard(SIMPLE_PGN, BOARD_OPTS, 1, 'none', 320, true)
       const currentBtn = el.querySelector<HTMLButtonElement>('button[data-ply="1"]')
       expect(currentBtn?.classList.contains('chess-move-btn-current')).toBe(true)
