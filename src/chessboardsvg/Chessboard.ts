@@ -116,8 +116,14 @@ export class Chessboard {
         return chessboard;
       }
 
-      // Replay moves up to the specified ply (or all moves if ply exceeds history length)
-      const movesToReplay = Math.min(ply, history.length);
+      if (ply > history.length) {
+        throw new Error(
+          `ply ${ply} is out of range; this game has ${history.length} plies (valid range: 0–${history.length})`,
+        );
+      }
+
+      // Replay moves up to the specified ply
+      const movesToReplay = ply;
       for (let i = 0; i < movesToReplay; i++) {
         chessboard.chessboard.move(history[i].san);
         // Store the last move that was played
