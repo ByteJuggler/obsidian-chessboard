@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   parseCodeBlock,
+  parseAnnotationLine,
   ANNOTATION_COLORS,
   HIGHLIGHT_DEFAULT,
   ARROW_DEFAULT,
@@ -8,6 +9,68 @@ import {
 } from '../Annotations'
 
 const STARTING_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR'
+
+describe('parseAnnotationLine', () => {
+  it('parses an arrow token with a color modifier', () => {
+    // Scenario: A red arrow annotation is parsed directly from a space-separated token string
+    // Given: the token string "Ae2-e4/r"
+    // When: parseAnnotationLine is called
+    // Then: one ArrowAnnotation with start='e2', end='e4', color=red is returned
+    const result = parseAnnotationLine('Ae2-e4/r')
+    expect(result).toHaveLength(1)
+    const ann = result[0]
+    expect(ann.type).toBe('arrow')
+    if (ann.type === 'arrow') {
+      expect(ann.start).toBe('e2')
+      expect(ann.end).toBe('e4')
+      expect(ann.color).toBe(ANNOTATION_COLORS.red)
+    }
+  })
+
+  it('parses a highlight token with a color modifier', () => {
+    // Scenario: A green highlight annotation is parsed directly from a token string
+    // Given: the token string "Hc7/g"
+    // When: parseAnnotationLine is called
+    // Then: one Highlight with square='c7' and color=green is returned
+    const result = parseAnnotationLine('Hc7/g')
+    expect(result).toHaveLength(1)
+    const ann = result[0]
+    expect(ann.type).toBe('highlight')
+    if (ann.type === 'highlight') {
+      expect(ann.square).toBe('c7')
+      expect(ann.color).toBe(ANNOTATION_COLORS.green)
+    }
+  })
+
+  it('parses an icon token', () => {
+    // Scenario: A move-quality icon token is parsed directly from a token string
+    // Given: the token string "!c5"
+    // When: parseAnnotationLine is called
+    // Then: one IconAnnotation with square='c5' and icon='excellent' is returned
+    const result = parseAnnotationLine('!c5')
+    expect(result).toHaveLength(1)
+    const ann = result[0]
+    expect(ann.type).toBe('icon')
+    if (ann.type === 'icon') {
+      expect(ann.square).toBe('c5')
+      expect(ann.icon).toBe('excellent')
+    }
+  })
+
+  it('parses all tokens from the acceptance-test annotation string', () => {
+    // Scenario: The full annotation string from the feature acceptance test is parsed correctly
+    // Given: the token string "Ac7-c5/r Hc7/g Hc5/g !c5 Ag7-g6"
+    // When: parseAnnotationLine is called
+    // Then: five annotations are returned in order: red arrow, two green highlights, icon, default arrow
+    const result = parseAnnotationLine('Ac7-c5/r Hc7/g Hc5/g !c5 Ag7-g6')
+    expect(result).toHaveLength(5)
+    expect(result[0]).toMatchObject({ type: 'arrow', start: 'c7', end: 'c5', color: ANNOTATION_COLORS.red })
+    expect(result[1]).toMatchObject({ type: 'highlight', square: 'c7', color: ANNOTATION_COLORS.green })
+    expect(result[2]).toMatchObject({ type: 'highlight', square: 'c5', color: ANNOTATION_COLORS.green })
+    expect(result[3]).toMatchObject({ type: 'icon', square: 'c5', icon: 'excellent' })
+    expect(result[4]).toMatchObject({ type: 'arrow', start: 'g7', end: 'g6', color: ARROW_DEFAULT })
+  })
+})
 
 describe('parseCodeBlock', () => {
   it('parses bare FEN with no annotations', () => {
