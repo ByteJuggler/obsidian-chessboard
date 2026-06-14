@@ -8,7 +8,7 @@
 
 ### Fixes
 
-- Specifying a `ply:` value larger than the number of half-moves in the PGN now shows a clear error message indicating the valid range, instead of silently rendering the wrong position.
+- Specifying a `ply:` value larger than the number of half-moves in the PGN now clamps to the last ply, rendering the final position instead of showing nothing.
 
 ## v0.20.0
 

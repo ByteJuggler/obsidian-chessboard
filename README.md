@@ -153,7 +153,7 @@ annotations: Ac7-c5/r Hc7/g Hc5/g !c5 Ag7-g6
 ```
 ````
 
-If the `ply:` value exceeds the number of half-moves in the game, the plugin displays an error indicating the valid range instead of rendering the board.
+If the `ply:` value exceeds the number of half-moves in the game, it is treated as if the last ply was specified.
 
 ### Current Limitations
 

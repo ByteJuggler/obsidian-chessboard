@@ -131,13 +131,15 @@ describe('createInteractivePGNBoard', () => {
     expect(svgs.length).toBeGreaterThan(0)
   })
 
-  it('throws when initialPly exceeds game length', () => {
-    // Scenario: A ply value beyond the end of the game is an authoring error that must be reported
+  it('clamps to last ply when initialPly exceeds game length', () => {
+    // Scenario: A ply beyond the end of the game starts the board at the final position
     // Given: a PGN with 4 half-moves and an initial ply of 99
     // When: createInteractivePGNBoard is called
-    // Then: an Error is thrown whose message names the invalid ply and the valid maximum
-    expect(() => createInteractivePGNBoard(SIMPLE_PGN, BOARD_OPTS, 99, 'none', 320)).toThrow(/ply 99.*out of range/i)
-    expect(() => createInteractivePGNBoard(SIMPLE_PGN, BOARD_OPTS, 99, 'none', 320)).toThrow(/4/)
+    // Then: the board renders without error and next/last buttons are disabled (at final ply)
+    const el = createInteractivePGNBoard(SIMPLE_PGN, BOARD_OPTS, 99, 'none', 320)
+    const { next, last } = getNavButtons(el)
+    expect(next.disabled).toBe(true)
+    expect(last.disabled).toBe(true)
   })
 
   describe('annotations', () => {
@@ -159,6 +161,28 @@ describe('createInteractivePGNBoard', () => {
       // Then: the background annotations group is empty (no show-move highlights either)
       const el = createInteractivePGNBoard(SIMPLE_PGN, BOARD_OPTS, 2, 'none', 320, false, HIGHLIGHT_ANN)
       const prev = el.querySelector<HTMLButtonElement>('button.chess-pgn-btn:nth-of-type(2)')!
+      prev.click()
+      expect(bgAnnotations(el).children.length).toBe(0)
+    })
+
+    it('renders annotations when clamped ply exceeds game length', () => {
+      // Scenario: An out-of-range ply clamps to last ply and annotations still render
+      // Given: a board with ply=99 (clamped to 4) and a highlight annotation
+      // When: the board is rendered at the clamped final ply
+      // Then: the annotation is visible (targetPly matches the clamped currentPly)
+      const el = createInteractivePGNBoard(SIMPLE_PGN, BOARD_OPTS, 99, 'none', 320, false, HIGHLIGHT_ANN)
+      expect(bgAnnotations(el).children.length).toBeGreaterThan(0)
+    })
+
+    it('renders annotations at last ply when no ply specified', () => {
+      // Scenario: Omitting ply pins annotations to the final move of the game
+      // Given: an interactive board with no ply specified and a highlight annotation
+      // When: the board is navigated to the last ply
+      // Then: the annotation is visible; at any other ply it is hidden
+      const el = createInteractivePGNBoard(SIMPLE_PGN, BOARD_OPTS, undefined, 'none', 320, false, HIGHLIGHT_ANN)
+      const { last, prev } = getNavButtons(el)
+      last.click()
+      expect(bgAnnotations(el).children.length).toBeGreaterThan(0)
       prev.click()
       expect(bgAnnotations(el).children.length).toBe(0)
     })

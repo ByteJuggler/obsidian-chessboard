@@ -191,13 +191,14 @@ describe('SVGChessboard.fromFEN', () => {
 describe('SVGChessboard.fromPGN', () => {
   const PGN = '1.e4 e5'
 
-  it('throws when ply exceeds the number of moves in the game', () => {
-    // Scenario: A ply value beyond the end of the game is an authoring error the user must fix
-    // Given: a PGN with 2 plies and a requested ply of 5
+  it('clamps to last ply when ply exceeds the number of moves in the game', () => {
+    // Scenario: A ply beyond the end of the game renders the final position without error
+    // Given: a PGN with 2 plies (1.e4 e5) and a requested ply of 5
     // When: SVGChessboard.fromPGN is called
-    // Then: an Error is thrown whose message includes the out-of-range ply and the max valid ply
-    expect(() => SVGChessboard.fromPGN(PGN, NO_COORDS, 5)).toThrow(/ply 5.*out of range/i)
-    expect(() => SVGChessboard.fromPGN(PGN, NO_COORDS, 5)).toThrow(/2/)
+    // Then: it renders without throwing and produces a valid SVG board
+    expect(() => SVGChessboard.fromPGN(PGN, NO_COORDS, 5)).not.toThrow()
+    const board = SVGChessboard.fromPGN(PGN, NO_COORDS, 5)
+    expect(board.draw()).toBeDefined()
   })
 
   it('renders from PGN at ply 1', () => {

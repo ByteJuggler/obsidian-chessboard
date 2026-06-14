@@ -117,9 +117,7 @@ export class Chessboard {
       }
 
       if (ply > history.length) {
-        throw new Error(
-          `ply ${ply} is out of range; this game has ${history.length} plies (valid range: 0–${history.length})`,
-        );
+        ply = history.length;
       }
 
       // Replay moves up to the specified ply

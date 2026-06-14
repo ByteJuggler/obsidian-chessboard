@@ -31,15 +31,10 @@ class PGNGameState {
 
     this.moveHistory = this.chess.history({ verbose: true });
 
-    // Validate ply before using it
-    if (initialPly !== undefined && initialPly > this.moveHistory.length) {
-      throw new Error(
-        `ply ${initialPly} is out of range; this game has ${this.moveHistory.length} plies (valid range: 0–${this.moveHistory.length})`,
-      );
-    }
-
-    // Start at initial ply or beginning
-    this.currentPly = initialPly !== undefined ? initialPly : 0;
+    // Start at initial ply (clamped to valid range) or beginning
+    this.currentPly = initialPly !== undefined
+      ? Math.min(initialPly, this.moveHistory.length)
+      : 0;
 
     // Reset to starting position and replay moves to initial ply
     this._resetToStart();
@@ -405,7 +400,7 @@ export function createInteractivePGNBoard(
 ): HTMLElement {
   // Create game state
   const gameState = new PGNGameState(pgnString, initialPly, showMove);
-  const targetPly = initialPly !== undefined ? initialPly : gameState.getTotalPlies();
+  const targetPly = initialPly !== undefined ? gameState.getCurrentPly() : gameState.getTotalPlies();
 
   const container = createDiv("chess-pgn-container");
   container.setCssProps({ "--chess-board-max-width": `${boardWidthPx}px` });

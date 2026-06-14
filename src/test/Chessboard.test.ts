@@ -152,12 +152,12 @@ describe('Chessboard.fromPGN', () => {
     expect(board.get(4, 4)?.type).toBe('p')
   })
 
-  it('throws when ply exceeds game length', () => {
-    // Scenario: A ply value beyond the end of the game is an authoring error that must be reported
+  it('clamps to last move when ply exceeds game length', () => {
+    // Scenario: A ply beyond the end of the game renders the final position
     // Given: a PGN with 4 half-moves and a requested ply of 999
     // When: fromPGN is called
-    // Then: an Error is thrown whose message names the invalid ply and the valid maximum
-    expect(() => Chessboard.fromPGN(PGN, 999)).toThrow(/ply 999.*out of range/i)
-    expect(() => Chessboard.fromPGN(PGN, 999)).toThrow(/4/)
+    // Then: the board reflects the position after the last move (Nc6 on c6)
+    const board = Chessboard.fromPGN(PGN, 999)
+    expect(board.getLastMove()?.san).toBe('Nc6')
   })
 })
