@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+### New
+
+- ⭐ `chessboard-pgn` blocks now support the full `annotations:` syntax (arrows, highlights, icons, shapes), identical to FEN mode. Annotations are displayed at the target ply (`ply:` if specified, otherwise the last move) and hidden when navigating away in interactive mode.
+
+### Fixes
+
+- Specifying a `ply:` value larger than the number of half-moves in the PGN now shows a clear error message indicating the valid range, instead of silently rendering the wrong position.
+
 ## v0.20.0
 
 ### New

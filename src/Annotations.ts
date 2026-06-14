@@ -83,6 +83,93 @@ export const HIGHLIGHT_DEFAULT = ANNOTATION_COLORS.red;
 export const ARROW_DEFAULT = ANNOTATION_COLORS.yellow;
 export const SHAPE_DEFAULT = ANNOTATION_COLORS.yellow;
 
+export function parseAnnotationLine(line: string): Array<Annotation> {
+  const annotations: Array<Annotation> = [];
+  const tokens = line.split(" ");
+  for (const annotation of tokens) {
+    if (annotation.startsWith("H")) {
+      let color = HIGHLIGHT_DEFAULT;
+      if (annotation.endsWith("/y")) {
+        color = ANNOTATION_COLORS.yellow;
+      } else if (annotation.endsWith("/g")) {
+        color = ANNOTATION_COLORS.green;
+      } else if (annotation.endsWith("/b")) {
+        color = ANNOTATION_COLORS.blue;
+      }
+      annotations.push({ type: "highlight", square: annotation.substring(1, 3), color });
+      continue;
+    }
+    if (annotation.startsWith("A")) {
+      let color = ARROW_DEFAULT;
+      if (annotation.endsWith("/r")) {
+        color = ANNOTATION_COLORS.red;
+      } else if (annotation.endsWith("/g")) {
+        color = ANNOTATION_COLORS.green;
+      } else if (annotation.endsWith("/b")) {
+        color = ANNOTATION_COLORS.blue;
+      }
+      const [start, end] = annotation.substring(1, 6).split("-");
+      annotations.push({ type: "arrow", start, end, color });
+      continue;
+    }
+    if (annotation.startsWith("F")) {
+      annotations.push({ type: "icon", square: annotation.substring(1, 3), icon: ICON_MAPPING["F"] });
+      continue;
+    }
+    if (annotation.startsWith("#W")) {
+      annotations.push({ type: "icon", square: annotation.substring(2, 4), icon: ICON_MAPPING["#W"] });
+      continue;
+    }
+    if (annotation.startsWith("#B")) {
+      annotations.push({ type: "icon", square: annotation.substring(2, 4), icon: ICON_MAPPING["#B"] });
+      continue;
+    }
+    if (annotation.startsWith("!?")) {
+      annotations.push({ type: "icon", square: annotation.substring(2, 4), icon: ICON_MAPPING["!?"] });
+      continue;
+    }
+    if (annotation.startsWith("!!")) {
+      annotations.push({ type: "icon", square: annotation.substring(2, 4), icon: ICON_MAPPING["!!"] });
+      continue;
+    }
+    if (annotation.startsWith("!")) {
+      annotations.push({ type: "icon", square: annotation.substring(1, 3), icon: ICON_MAPPING["!"] });
+      continue;
+    }
+    if (annotation.startsWith("??")) {
+      annotations.push({ type: "icon", square: annotation.substring(2, 4), icon: ICON_MAPPING["??"] });
+      continue;
+    }
+    if (annotation.startsWith("?")) {
+      annotations.push({ type: "icon", square: annotation.substring(1, 3), icon: ICON_MAPPING["?"] });
+      continue;
+    }
+    if (annotation.startsWith("C") || annotation.startsWith("S") || annotation.startsWith("Q")) {
+      let color = SHAPE_DEFAULT;
+      let shapeType: "circle" | "square" | "squircle";
+      if (annotation.startsWith("C")) {
+        shapeType = "circle";
+      } else if (annotation.startsWith("S")) {
+        shapeType = "square";
+      } else {
+        shapeType = "squircle";
+      }
+      if (annotation.endsWith("/r")) {
+        color = ANNOTATION_COLORS.red;
+      } else if (annotation.endsWith("/g")) {
+        color = ANNOTATION_COLORS.green;
+      } else if (annotation.endsWith("/b")) {
+        color = ANNOTATION_COLORS.blue;
+      } else if (annotation.endsWith("/y")) {
+        color = ANNOTATION_COLORS.yellow;
+      }
+      annotations.push({ type: "shape", square: annotation.substring(1, 3), shape: shapeType, color });
+      continue;
+    }
+  }
+  return annotations;
+}
+
 export function parseCodeBlock(input: string): ParsedChessCode {
   const lines = input.split(/\r?\n/);
   let fen = lines[0];
@@ -109,146 +196,8 @@ export function parseCodeBlock(input: string): ParsedChessCode {
       orientation = line;
     }
     if (line.startsWith("annotations: ")) {
-      line = line.replace("annotations: ", "");
-      let partial_annotations = line.split(" ");
-      for (let annotation of partial_annotations) {
-        if (annotation.startsWith("H")) {
-          let color = HIGHLIGHT_DEFAULT;
-          if (annotation.endsWith("/y")) {
-            color = ANNOTATION_COLORS.yellow;
-          } else if (annotation.endsWith("/g")) {
-            color = ANNOTATION_COLORS.green;
-          } else if (annotation.endsWith("/b")) {
-            color = ANNOTATION_COLORS.blue;
-          }
-          annotations.push({
-            type: "highlight",
-            square: annotation.substring(1, 3),
-            color: color,
-          });
-          continue;
-        }
-        if (annotation.startsWith("A")) {
-          let color = ARROW_DEFAULT;
-          if (annotation.endsWith("/r")) {
-            color = ANNOTATION_COLORS.red;
-          } else if (annotation.endsWith("/g")) {
-            color = ANNOTATION_COLORS.green;
-          } else if (annotation.endsWith("/b")) {
-            color = ANNOTATION_COLORS.blue;
-          }
-          let [start, end] = annotation.substring(1, 6).split("-");
-          annotations.push({
-            type: "arrow",
-            start,
-            end,
-            color: color,
-          });
-          continue;
-        }
-        if (annotation.startsWith("F")) {
-          annotations.push({
-            type: "icon",
-            square: annotation.substring(1, 3),
-            icon: ICON_MAPPING["F"],
-          });
-          continue;
-        }
-        if (annotation.startsWith("#W")) {
-          annotations.push({
-            type: "icon",
-            square: annotation.substring(2, 4),
-            icon: ICON_MAPPING["#W"],
-          });
-          continue;
-        }
-        if (annotation.startsWith("#B")) {
-          annotations.push({
-            type: "icon",
-            square: annotation.substring(2, 4),
-            icon: ICON_MAPPING["#B"],
-          });
-          continue;
-        }
-        if (annotation.startsWith("!?")) {
-          annotations.push({
-            type: "icon",
-            square: annotation.substring(2, 4),
-            icon: ICON_MAPPING["!?"],
-          });
-          continue;
-        }
-        if (annotation.startsWith("!!")) {
-          annotations.push({
-            type: "icon",
-            square: annotation.substring(2, 4),
-            icon: ICON_MAPPING["!!"],
-          });
-          continue;
-        }
-        if (annotation.startsWith("!")) {
-          let icon = ICON_MAPPING["!"];
-          annotations.push({
-            type: "icon",
-            square: annotation.substring(1, 3),
-            icon: icon,
-          });
-          continue;
-        }
-        if (annotation.startsWith("??")) {
-          let icon = ICON_MAPPING["??"];
-          annotations.push({
-            type: "icon",
-            square: annotation.substring(2, 4),
-            icon: icon,
-          });
-          continue;
-        }
-        if (annotation.startsWith("?")) {
-          let icon = ICON_MAPPING["?"];
-          annotations.push({
-            type: "icon",
-            square: annotation.substring(1, 3),
-            icon: icon,
-          });
-          continue;
-        }
-        if (annotation.startsWith("C") || annotation.startsWith("S") || annotation.startsWith("Q")) {
-          let color = SHAPE_DEFAULT;
-          let shapeType: "circle" | "square" | "squircle";
-
-          // Determine shape type
-          if (annotation.startsWith("C")) {
-            shapeType = "circle";
-          } else if (annotation.startsWith("S")) {
-            shapeType = "square";
-          } else {
-            shapeType = "squircle";
-          }
-
-          // Parse color modifiers
-          if (annotation.endsWith("/r")) {
-            color = ANNOTATION_COLORS.red;
-          } else if (annotation.endsWith("/g")) {
-            color = ANNOTATION_COLORS.green;
-          } else if (annotation.endsWith("/b")) {
-            color = ANNOTATION_COLORS.blue;
-          } else if (annotation.endsWith("/y")) {
-            color = ANNOTATION_COLORS.yellow;
-          }
-
-          // Extract square (1-3 handles the square, accounting for color modifiers)
-          const square = annotation.substring(1, 3);
-
-          annotations.push({
-            type: "shape",
-            square: square,
-            shape: shapeType,
-            color: color,
-          });
-          continue;
-        }
-      }
+      const tokenLine = line.replace("annotations: ", "");
+      annotations.push(...parseAnnotationLine(tokenLine));
     }
   }
   return { fen, annotations, orientation, strict };

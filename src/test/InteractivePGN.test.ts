@@ -52,7 +52,7 @@ describe('createInteractivePGNBoard', () => {
     // Given: an interactive board initialised beyond the last move (clamped to final ply)
     // When: button disabled states are inspected
     // Then: next and last are disabled; first and prev are enabled
-    const el = createInteractivePGNBoard(SIMPLE_PGN, BOARD_OPTS, 999, 'none', 320)
+    const el = createInteractivePGNBoard(SIMPLE_PGN, BOARD_OPTS, 4, 'none', 320)
     const { first, prev, next, last } = getNavButtons(el)
     expect(first.disabled).toBe(false)
     expect(prev.disabled).toBe(false)
